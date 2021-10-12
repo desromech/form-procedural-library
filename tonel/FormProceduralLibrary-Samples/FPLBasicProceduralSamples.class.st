@@ -7,7 +7,7 @@ Class {
 	#category : #'FormProceduralLibrary-Samples'
 }
 
-{ #category : #examples }
+{ #category : #'examples - color' }
 FPLBasicProceduralSamples class >> exampleBlack [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderColor: [:x :y | Color black];
@@ -15,7 +15,7 @@ FPLBasicProceduralSamples class >> exampleBlack [
 		inspect.
 ]
 
-{ #category : #examples }
+{ #category : #'examples - basic functions' }
 FPLBasicProceduralSamples class >> exampleCheckboard [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y |
@@ -28,7 +28,21 @@ FPLBasicProceduralSamples class >> exampleCheckboard [
 		inspect.
 ]
 
-{ #category : #examples }
+{ #category : #'examples - basic functions' }
+FPLBasicProceduralSamples class >> exampleCheckboardNormalMap [
+	^ ((FPLFormRenderer extent: 128@128)
+		renderGray: [:x :y |
+			| xp yp |
+			xp := (x * 5.0) floorFractionPart < 0.5.
+			yp := (y * 5.0) floorFractionPart < 0.5.
+			(xp xor: yp) asBit
+		];
+		makeIntoNormalMap;
+		form)
+		inspect.
+]
+
+{ #category : #'examples - basic functions' }
 FPLBasicProceduralSamples class >> exampleHorizontalGrayGradient [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | x ];
@@ -36,7 +50,7 @@ FPLBasicProceduralSamples class >> exampleHorizontalGrayGradient [
 		inspect.
 ]
 
-{ #category : #examples }
+{ #category : #'examples - basic functions' }
 FPLBasicProceduralSamples class >> exampleHorizontalPulse [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | ((x * 5.0) floorFractionPart < 0.5) asBit];
@@ -44,7 +58,16 @@ FPLBasicProceduralSamples class >> exampleHorizontalPulse [
 		inspect.
 ]
 
-{ #category : #examples }
+{ #category : #'examples - basic functions' }
+FPLBasicProceduralSamples class >> exampleHorizontalPulseNormalMap [
+	^ ((FPLFormRenderer extent: 128@128)
+		renderGray: [:x :y | ((x * 5.0) floorFractionPart < 0.5) asBit];
+		makeIntoNormalMap;
+		form)
+		inspect.
+]
+
+{ #category : #'examples - basic functions' }
 FPLBasicProceduralSamples class >> exampleHorizontalSawTooth [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | (x * 5) floorFractionPart ];
@@ -52,7 +75,16 @@ FPLBasicProceduralSamples class >> exampleHorizontalSawTooth [
 		inspect.
 ]
 
-{ #category : #examples }
+{ #category : #'examples - basic functions' }
+FPLBasicProceduralSamples class >> exampleHorizontalSawToothNormalMap [
+	^ ((FPLFormRenderer extent: 128@128)
+		renderGray: [:x :y | (x * 5) floorFractionPart ];
+		makeIntoNormalMap;
+		form)
+		inspect.
+]
+
+{ #category : #'examples - basic functions' }
 FPLBasicProceduralSamples class >> exampleRGGradient [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderColor: [:x :y | Color r: x g: y b: 0.0];
@@ -60,7 +92,15 @@ FPLBasicProceduralSamples class >> exampleRGGradient [
 		inspect.
 ]
 
-{ #category : #examples }
+{ #category : #'examples - color' }
+FPLBasicProceduralSamples class >> exampleRed [
+	^ ((FPLFormRenderer extent: 128@128)
+		renderColor: [:x :y | Color red];
+		form)
+		inspect.
+]
+
+{ #category : #'examples - basic functions' }
 FPLBasicProceduralSamples class >> exampleVerticalGrayGradient [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | y ];
@@ -68,7 +108,7 @@ FPLBasicProceduralSamples class >> exampleVerticalGrayGradient [
 		inspect.
 ]
 
-{ #category : #examples }
+{ #category : #'examples - basic functions' }
 FPLBasicProceduralSamples class >> exampleVerticalPulse [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | ((y * 5.0) floorFractionPart < 0.5) asBit];
@@ -76,10 +116,19 @@ FPLBasicProceduralSamples class >> exampleVerticalPulse [
 		inspect.
 ]
 
-{ #category : #examples }
+{ #category : #'examples - basic functions' }
 FPLBasicProceduralSamples class >> exampleVerticalSawTooth [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | (y * 5) floorFractionPart ];
+		form)
+		inspect.
+]
+
+{ #category : #'examples - basic functions' }
+FPLBasicProceduralSamples class >> exampleVerticalSawToothNormalMap [
+	^ ((FPLFormRenderer extent: 128@128)
+		renderGray: [:x :y | (y * 5) floorFractionPart ];
+		makeIntoNormalMap;
 		form)
 		inspect.
 ]
