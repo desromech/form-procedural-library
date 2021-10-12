@@ -37,7 +37,35 @@ FPLBasicProceduralSamples class >> exampleCheckboardNormalMap [
 			yp := (y * 5.0) floorFractionPart < 0.5.
 			(xp xor: yp) asBit
 		];
-		makeIntoNormalMap;
+		intoNormalMap;
+		form)
+		inspect.
+]
+
+{ #category : #'examples - basic functions' }
+FPLBasicProceduralSamples class >> exampleCheckboardNormalMapPrewitt [
+	^ ((FPLFormRenderer extent: 128@128)
+		renderGray: [:x :y |
+			| xp yp |
+			xp := (x * 5.0) floorFractionPart < 0.5.
+			yp := (y * 5.0) floorFractionPart < 0.5.
+			(xp xor: yp) asBit
+		];
+		intoNormalMapWithXScale: 1.0 yScale: 1.0 heightScale: 1.0 gradientOperator: FPLGradientOperator prewitt3x3;
+		form)
+		inspect.
+]
+
+{ #category : #'examples - basic functions' }
+FPLBasicProceduralSamples class >> exampleCheckboardNormalMapSobel [
+	^ ((FPLFormRenderer extent: 128@128)
+		renderGray: [:x :y |
+			| xp yp |
+			xp := (x * 5.0) floorFractionPart < 0.5.
+			yp := (y * 5.0) floorFractionPart < 0.5.
+			(xp xor: yp) asBit
+		];
+		intoNormalMapWithXScale: 1.0 yScale: 1.0 heightScale: 1.0 gradientOperator: FPLGradientOperator sobel3x3;
 		form)
 		inspect.
 ]
@@ -62,7 +90,7 @@ FPLBasicProceduralSamples class >> exampleHorizontalPulse [
 FPLBasicProceduralSamples class >> exampleHorizontalPulseNormalMap [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | ((x * 5.0) floorFractionPart < 0.5) asBit];
-		makeIntoNormalMap;
+		intoNormalMap;
 		form)
 		inspect.
 ]
@@ -79,7 +107,7 @@ FPLBasicProceduralSamples class >> exampleHorizontalSawTooth [
 FPLBasicProceduralSamples class >> exampleHorizontalSawToothNormalMap [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | (x * 5) floorFractionPart ];
-		makeIntoNormalMap;
+		intoNormalMap;
 		form)
 		inspect.
 ]
@@ -128,7 +156,7 @@ FPLBasicProceduralSamples class >> exampleVerticalSawTooth [
 FPLBasicProceduralSamples class >> exampleVerticalSawToothNormalMap [
 	^ ((FPLFormRenderer extent: 128@128)
 		renderGray: [:x :y | (y * 5) floorFractionPart ];
-		makeIntoNormalMap;
+		intoNormalMap;
 		form)
 		inspect.
 ]

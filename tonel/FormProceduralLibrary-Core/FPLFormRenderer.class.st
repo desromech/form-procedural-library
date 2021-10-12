@@ -1,3 +1,6 @@
+"
+I am an utility class for rendering procedural textures into a form.
+"
 Class {
 	#name : #FPLFormRenderer,
 	#superclass : #Object,
@@ -25,11 +28,24 @@ FPLFormRenderer class >> form: aForm [
 { #category : #accessing }
 FPLFormRenderer >> decodeGrays [
 	| result destIndex |
+	form unhibernate.
+	form depth = 8 ifTrue: [ 
+		result := form bits copy.
+		ByteArray adoptInstance: result.
+		^ result 
+	].
+
+	self assert: form depth = 32.
 	result := ByteArray new: form width * form height.
 	destIndex := 1.
-	form unhibernate.
 	form bits do: [ :word |
-		result at: destIndex put: (word bitAnd: 16rff).
+		| b g r l |
+		b := (word bitAnd: 16rff).
+		g := (word bitAnd: 16rff00) bitShift: -8.
+		r := (word bitAnd: 16rff0000) bitShift: -16.
+
+		l := ((299 * r) + (587 * g) + (114 * b)) / 1000 min: 255 max: 0.
+		result at: destIndex put: r.
 		destIndex := destIndex + 1
 	].
 	^ result
@@ -103,42 +119,64 @@ FPLFormRenderer >> grayPixelFetcher [
 	]
 ]
 
-{ #category : #transforming }
-FPLFormRenderer >> makeIntoNormalMap [
-	self makeIntoNormalMapWithScale: 1.0
+{ #category : #accessing }
+FPLFormRenderer >> heightFetcherWithScale: scale bias: bias [
+	| grayFetcher factor |
+	grayFetcher := self grayPixelFetcher.
+	factor := scale / 255.0.
+	^ [ :x :y |
+		(grayFetcher value: x value: y) * factor + bias
+	]
 ]
 
 { #category : #transforming }
-FPLFormRenderer >> makeIntoNormalMapWithScale: heightScale [
-	self makeIntoNormalMapWithXScale: 1.0 yScale: 1.0 heightScale: heightScale
+FPLFormRenderer >> intoNormalMap [
+	self intoNormalMapWithScale: 1.0
 ]
 
 { #category : #transforming }
-FPLFormRenderer >> makeIntoNormalMapWithXScale: xScale yScale: yScale heightScale: heightScale [
-	| w h resultForm fetchGray bits destIndex |
+FPLFormRenderer >> intoNormalMapWithScale: heightScale [
+	self intoNormalMapWithXScale: 1.0 yScale: 1.0 heightScale: heightScale
+]
+
+{ #category : #transforming }
+FPLFormRenderer >> intoNormalMapWithXScale: xScale yScale: yScale heightScale: heightScale [
+	^ self intoNormalMapWithXScale: xScale yScale: yScale heightScale: heightScale gradientOperator: FPLGradientOperator discrete
+]
+
+{ #category : #transforming }
+FPLFormRenderer >> intoNormalMapWithXScale: xScale yScale: yScale heightScale: heightScale gradientOperator: gradientOperator [
+	^ self intoNormalMapWithXScale: xScale yScale: yScale heightScale: heightScale heightBias: 0.0 gradientOperator: gradientOperator
+]
+
+{ #category : #transforming }
+FPLFormRenderer >> intoNormalMapWithXScale: xScale yScale: yScale heightScale: heightScale heightBias: heightBias gradientOperator: gradientOperator [
+	| w h resultForm fetchGray bits destIndex gradientOperatorX gradientOperatorY |
 	w := form width.
 	h := form height.
 	
-	fetchGray := self grayPixelFetcher.
+	fetchGray := self heightFetcherWithScale: heightScale bias: heightBias.
 
 	resultForm := Form extent: form extent depth: 32.
 	resultForm unhibernate.
 	bits := resultForm bits.
 	destIndex := 1.
+	gradientOperatorX := gradientOperator first.
+	gradientOperatorY := gradientOperator second.
 	0 to: h - 1 do: [ :y |
 		0 to: w - 1 do: [ :x |
 			| dx dy nx ny nz nl |
-			dx := (fetchGray value: x + 1 value: y) - (fetchGray value: x - 1 value: y) * heightScale.
-			dy := (fetchGray value: x value: y + 1) - (fetchGray value: x value: y - 1) * heightScale.
+			dx := (gradientOperatorX value: fetchGray value: x value: y) * xScale.
+			dy := (gradientOperatorY value: fetchGray value: x value: y) * yScale.
 			
 			"
-			tangent: (step, 0.0, dx)
-			bitangent: (0.0, step, dy)
-			normal: tangent x bitangent => (-step * dx, -step *dy, step * step)
+			tangent: (1, 0.0, dx)
+			bitangent: (0.0, 1, dy)
+			normal: tangent x bitangent => (-stepY*dx*stepX, -stepX*dy, stepX*stepY)
 			"
-			nx := -2.0 * dx * xScale.
-			ny := -2.0 * dy * yScale.
-			nz := 4.0.
+			nx := dx negated.
+			ny := dy negated.
+			nz := 1.0.
 			nl := ((nx*nx) + (ny*ny) + (nz*nz)) sqrt.
 			nx := nx / nl * 0.5 + 0.5.
 			ny := ny / nl * 0.5 + 0.5.
