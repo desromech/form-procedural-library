@@ -140,6 +140,11 @@ FPLFormRenderer >> intoNormalMapWithScale: heightScale [
 ]
 
 { #category : #transforming }
+FPLFormRenderer >> intoNormalMapWithScale: heightScale gradientOperator: gradientOperator [
+	self intoNormalMapWithXScale: 1.0 yScale: 1.0 heightScale: heightScale gradientOperator: gradientOperator
+]
+
+{ #category : #transforming }
 FPLFormRenderer >> intoNormalMapWithXScale: xScale yScale: yScale heightScale: heightScale [
 	^ self intoNormalMapWithXScale: xScale yScale: yScale heightScale: heightScale gradientOperator: FPLGradientOperator discrete
 ]
