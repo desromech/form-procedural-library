@@ -8,7 +8,7 @@ This library can be loaded in Pharo with by running the following in Playground:
 ```smalltalk
 Metacello new
    baseline: 'FormProceduralLibrary';
-   repository: 'github://ronsaldo/form-procedural-library';
+   repository: 'github://desromech/form-procedural-library';
    load
 ```
 
